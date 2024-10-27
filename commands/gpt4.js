@@ -3,7 +3,7 @@ const name = "yoruai" ;
 
 module.exports = {
   name,
-  description: "Interact with ChatGPT-4o",
+  description: "Interact with Yoru Bot",
   async run ({ api, event, send, args }){
     const prompt = args.join(" ");
     if (!prompt) return send(`Please enter your question! 
