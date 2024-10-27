@@ -1,5 +1,5 @@
 const axios = require("axios");
-const name = "yuroai" ;
+const name = "yoruai" ;
 
 module.exports = {
   name,
