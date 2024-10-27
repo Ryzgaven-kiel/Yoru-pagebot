@@ -8,7 +8,7 @@ module.exports = {
     const prompt = args.join(" ");
     if (!prompt) return send(`Please enter your question! 
 
-Example: ${api.prefix + name} what is love?`);
+Example: ${name} what is love?`);
     send("Please wait... 🔎");
     try {
     const gpt = await axios.get(`${api.api_josh}/api/gpt-4o`, {
