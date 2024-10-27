@@ -1,36 +1,30 @@
-const axios = require('axios');
-module.exports = {
-  name: 'gpt4',
-  description: 'Ask a question to GPT-4',
-  author: 'Deku (rest api)',
-  async execute(senderId, args, pageAccessToken, sendMessage) {
-    const prompt = args.join( );
-    try {
-      const apiUrl = `https://deku-rest-apis.ooguy.com/gpt4?prompt=${encodeURIComponent(prompt)}&uid=100${senderId}`;
-      const response = await axios.get(apiUrl);
-      const text = response.data.gpt4;
+const axios = require("axios");
+const name = "yuroai" ;
 
-      // Split the response into chunks if it exceeds 2000 characters
-      const maxMessageLength = 2000;
-      if (text.length > maxMessageLength) {
-        const messages = splitMessageIntoChunks(text, maxMessageLength);
-        for (const message of messages) {
-          sendMessage(senderId, { text: message }, pageAccessToken);
-        }
-      } else {
-        sendMessage(senderId, { text }, pageAccessToken);
+module.exports = {
+  name,
+  description: "Interact with ChatGPT-4o",
+  async run ({ api, event, send, args }){
+    const prompt = args.join(" ");
+    if (!prompt) return send(`Please enter your question! 
+
+Example: ${api.prefix + name} what is love?`);
+    send("Please wait... 🔎");
+    try {
+    const gpt = await axios.get(`${api.api_josh}/api/gpt-4o`, {
+      params: {
+        q: prompt,
+        uid: event.sender.id
       }
-    } catch (error) {
-      console.error('Error calling GPT-4 API:', error);
-      sendMessage(senderId, { text: 'Please Enter Your Valid Question?.' }, pageAccessToken);
+    });
+    if (!gpt || !gpt.data.status)
+    throw new Error();
+    send(`${gpt.data.result}
+
+🤖 Yoru Bot by Cristian M. Serrano`);
+    } catch(err){
+      send(err.message || err);
+      return;
     }
   }
-};
-
-function splitMessageIntoChunks(message, chunkSize) {
-  const chunks = [];
-  for (let i = 0; i < message.length; i += chunkSize) {
-    chunks.push(message.slice(i, i + chunkSize));
-  }
-  return chunks;
 }
