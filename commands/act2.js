@@ -14,7 +14,7 @@ module.exports = {
       if (prompt.includes('who created you') || prompt.includes('who is your creator') || prompt.includes('who is cristian')) {
         return sendMessage(senderId, { text: 
           'My creator is Cristian M. Serrano, a brilliant 2nd year college student who excels in Python programming. ' +
-          'His dedication and creativity inspire many, and he has a promising future ahead. Isn't he amazing?' 
+          'His dedication and creativity inspire many, and he has a promising future ahead. Isnt he amazing?' 
         }, pageAccessToken);
       }
 
