@@ -17,9 +17,9 @@ Example: ${name} what is love?`);
         uid: event.sender.id
       }
     });
-    if (!gpt || !gpt.data.status)
+    if (!yoruai || !yoruai.data.status)
     throw new Error();
-    send(`${gpt.data.result}
+    send(`${yoruai.data.result}
 
 🤖 Yoru Bot by Cristian M. Serrano`);
     } catch(err){
