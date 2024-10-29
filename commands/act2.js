@@ -1,17 +1,21 @@
 const { callGeminiAPI } = require('../utils/callGeminiAPI');
 
 module.exports = {
-  name: 'act2',
+  name: 'yoru',
   description: 'Ask a question to the Yoru AI',
   author: 'ChatGPT',
   async execute(senderId, args, pageAccessToken, sendMessage) {
     const prompt = args.join(' ').toLowerCase(); // Convert to lower case for case-insensitive comparison
+
     try {
       sendMessage(senderId, { text: '💬 | 𝙰𝚗𝚜𝚠𝚎𝚛𝚒𝚗𝚐...' }, pageAccessToken);
 
-      // Check for specific questions
-      if (prompt === 'who is your creator' || prompt === 'who is cristian m. serrano') {
-        return sendMessage(senderId, { text: 'My creator is Cristian M. Serrano, a 2nd year college student expert in Python programming language.' }, pageAccessToken);
+      // Check for specific questions about the creator
+      if (prompt.includes('who created you') || prompt.includes('who is your creator') || prompt.includes('who is cristian')) {
+        return sendMessage(senderId, { text: 
+          'My creator is Cristian M. Serrano, a brilliant 2nd year college student who excels in Python programming. ' +
+          'His dedication and creativity inspire many, and he has a promising future ahead. Isn't he amazing?' 
+        }, pageAccessToken);
       }
 
       const response = await callGeminiAPI(prompt);
@@ -39,4 +43,5 @@ function splitMessageIntoChunks(message, chunkSize) {
     chunks.push(message.slice(i, i + chunkSize));
   }
   return chunks;
-}
+    }
+        
