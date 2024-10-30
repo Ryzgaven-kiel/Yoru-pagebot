@@ -1,12 +1,30 @@
 const { callGeminiAPI } = require('../utils/callGeminiAPI');
+
 module.exports = {
   name: 'yoru',
   description: 'Ask a question to the Yoru AI',
   author: 'ChatGPT',
   async execute(senderId, args, pageAccessToken, sendMessage) {
-    const prompt = args.join(' ');
+    const prompt = args.join(' ').toLowerCase();
+
     try {
       sendMessage(senderId, { text: '💬 | 𝙰𝚗𝚜𝚠𝚎𝚛𝚒𝚗𝚐...' }, pageAccessToken);
+
+      // Check for specific questions about Cristian
+      const cristianQuestions = [
+        'who is cristian',
+        'who is your creator',
+        'who created you',
+        'who is cristian m. serrano',
+        'who made you'
+      ];
+
+      if (cristianQuestions.some(question => prompt.includes(question))) {
+        return sendMessage(senderId, {
+          text: 'My creator is Cristian M. Serrano, a talented individual with a bright future. If you have any concerns, please contact my creator: [Cristian\'s Profile](https://www.facebook.com/cristianmoridas.serrano)'
+        }, pageAccessToken);
+      }
+
       const response = await callGeminiAPI(prompt);
 
       // Split the response into chunks if it exceeds 2000 characters
@@ -21,7 +39,7 @@ module.exports = {
       }
     } catch (error) {
       console.error('Error calling Gemini API:', error);
-      sendMessage(senderId, { text: '.' }, pageAccessToken);
+      sendMessage(senderId, { text: 'An error occurred while processing your request.' }, pageAccessToken);
     }
   }
 };
@@ -32,4 +50,4 @@ function splitMessageIntoChunks(message, chunkSize) {
     chunks.push(message.slice(i, i + chunkSize));
   }
   return chunks;
-}
+          }
