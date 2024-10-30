@@ -3,7 +3,7 @@ const axios = require('axios');
 module.exports = {
   name: 'dewa',
   description: 'Generate an image based on a text prompt using OpenAI.',
-  author: 'Cristian',
+  author: 'ChatGPT',
 
   async execute(senderId, args, pageAccessToken, sendMessage) {
     const prompt = args.join(' ').trim();
@@ -21,7 +21,7 @@ module.exports = {
         size: '1024x1024'
       }, {
         headers: {
-          'Authorization': `Bearer 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`,
+          'Authorization': 'Bearer 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',
           'Content-Type': 'application/json'
         }
       });
