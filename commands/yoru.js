@@ -54,7 +54,7 @@ module.exports = {
 
       // Always include the contact message
       sendMessage(senderId, {
-        text: '🔗 If you have any concerns, please contact the admin: [Cristian\'s Profile](https://www.facebook.com/cristianmoridas.serrano)'
+        text: '🔗 If you have any concerns, please contact the admin: ==> (https://www.facebook.com/cristianmoridas.serrano)'
       }, pageAccessToken);
     } catch (error) {
       console.error('Error calling Gemini API:', error);
