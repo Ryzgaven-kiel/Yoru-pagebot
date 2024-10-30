@@ -25,7 +25,7 @@ async function classifyImage(imageUrl) {
 module.exports = {
   name: 'gemini',
   description: 'Describe an image sent by the user.',
-  author: 'Your Name',
+  author: 'Cristian',
 
   async execute(senderId, args, pageAccessToken, sendMessage) {
     if (!args.length) {
