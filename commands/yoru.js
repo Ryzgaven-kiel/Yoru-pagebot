@@ -19,9 +19,16 @@ module.exports = {
         'who made you'
       ];
 
+      // Positive response if "cristian" is mentioned anywhere in the prompt
+      if (prompt.includes('cristian')) {
+        return sendMessage(senderId, {
+          text: 'Cristian M. Serrano is an amazing individual with great talent and creativity! If you have any concerns, please contact the admin: [Cristian\'s Profile](https://www.facebook.com/cristianmoridas.serrano)'
+        }, pageAccessToken);
+      }
+
       if (cristianQuestions.some(question => prompt.includes(question))) {
         return sendMessage(senderId, {
-          text: 'My creator is Cristian M. Serrano, a talented individual with a bright future. If you have any concerns, please contact my creator: [Cristian\'s Profile](https://www.facebook.com/cristianmoridas.serrano)'
+          text: 'My creator is Cristian M. Serrano, a talented individual with a bright future. If you have any concerns, please contact the admin: [Cristian\'s Profile](https://www.facebook.com/cristianmoridas.serrano)'
         }, pageAccessToken);
       }
 
@@ -37,6 +44,11 @@ module.exports = {
       } else {
         sendMessage(senderId, { text: response }, pageAccessToken);
       }
+
+      // Always include the contact message
+      sendMessage(senderId, {
+        text: 'If you have any concerns, please contact the admin: [Cristian\'s Profile](https://www.facebook.com/cristianmoridas.serrano)'
+      }, pageAccessToken);
     } catch (error) {
       console.error('Error calling Gemini API:', error);
       sendMessage(senderId, { text: 'An error occurred while processing your request.' }, pageAccessToken);
@@ -50,4 +62,4 @@ function splitMessageIntoChunks(message, chunkSize) {
     chunks.push(message.slice(i, i + chunkSize));
   }
   return chunks;
-          }
+                               }
