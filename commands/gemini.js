@@ -1,5 +1,5 @@
 const fs = require('fs');
-const tf = require('@tensorflow/tfjs');
+const tf = require('@tensorflow/tfjs-node'); // Use the Node version for server-side
 const mobilenet = require('@tensorflow-models/mobilenet');
 const { createCanvas, loadImage } = require('canvas');
 
