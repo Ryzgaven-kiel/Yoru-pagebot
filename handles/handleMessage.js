@@ -5,7 +5,6 @@ const { sendMessage } = require('./sendMessage');
 const commands = new Map();
 const prefix = '-';
 
-// Load commands from the commands directory
 const commandFiles = fs.readdirSync(path.join(__dirname, '../commands')).filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
   const command = require(`../commands/${file}`);
@@ -20,10 +19,16 @@ async function handleMessage(event, pageAccessToken) {
 
   const senderId = event.sender.id;
 
+  // Check if the token is valid (this is a simple console check; for a more robust solution, use the API)
+  if (!pageAccessToken) {
+    console.error('Invalid page access token');
+    return;
+  }
+
   if (event.message && event.message.text) {
     const messageText = event.message.text.trim();
-
     let commandName, args;
+
     if (messageText.startsWith(prefix)) {
       const argsArray = messageText.slice(prefix.length).split(' ');
       commandName = argsArray.shift().toLowerCase();
@@ -40,19 +45,27 @@ async function handleMessage(event, pageAccessToken) {
         await command.execute(senderId, args, pageAccessToken, sendMessage);
       } catch (error) {
         console.error(`Error executing command ${commandName}:`, error);
-        if (error.message) {
-          sendMessage(senderId, { text: error.message }, pageAccessToken);
-        } else {
-          sendMessage(senderId, { text: 'There was an error executing that command.' }, pageAccessToken);
-        }
+        sendMessage(senderId, { text: 'There was an error executing that command.' }, pageAccessToken);
       }
       return;
     }
-  } else if (event.message) {
-    console.log('Received message without text');
+  } else if (event.message.attachments) {
+    const imageUrl = event.message.attachments[0].payload.url;
+    if (imageUrl) {
+      const command = commands.get('gemini');
+      if (command) {
+        try {
+          await command.execute(senderId, [imageUrl], pageAccessToken, sendMessage);
+        } catch (error) {
+          console.error('Error processing image:', error);
+          sendMessage(senderId, { text: 'Failed to process image.' }, pageAccessToken);
+        }
+      }
+    }
   } else {
-    console.log('Received event without message');
+    console.log('Received message without text or attachments');
   }
 }
 
 module.exports = { handleMessage };
+             
