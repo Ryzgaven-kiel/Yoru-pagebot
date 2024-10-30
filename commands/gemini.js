@@ -1,5 +1,4 @@
-const fs = require('fs');
-const tf = require('@tensorflow/tfjs-node'); // Use the Node version for server-side
+const tf = require('@tensorflow/tfjs-node'); // Node version of TensorFlow
 const mobilenet = require('@tensorflow-models/mobilenet');
 const { createCanvas, loadImage } = require('canvas');
 
@@ -30,16 +29,14 @@ async function classifyImage(imageUrl) {
 module.exports = {
   name: 'gemini',
   description: 'Describe an image sent by the user.',
-  author: 'Your Name', // Replace with the actual author's name
+  author: 'Your Name', // Replace with your actual name
 
-  async execute(message) {
-    const attachments = message.attachments;
-
-    if (attachments.length === 0) {
-      return message.reply('Please send an image to classify.');
+  async execute(senderId, args, pageAccessToken, sendMessage) {
+    if (!args.length) {
+      return sendMessage(senderId, { text: 'Please send an image to classify.' }, pageAccessToken);
     }
 
-    const imageUrl = attachments[0].url; // Get the first image attachment
+    const imageUrl = args[0]; // Assuming the user sends the image URL as an argument
 
     try {
       const predictions = await classifyImage(imageUrl);
@@ -47,10 +44,10 @@ module.exports = {
         .map(prediction => `${prediction.className} (${(prediction.probability * 100).toFixed(2)}%)`)
         .join(', ');
 
-      await message.reply(`I see: ${description}`);
+      await sendMessage(senderId, { text: `I see: ${description}` }, pageAccessToken);
     } catch (error) {
       console.error('Error classifying image:', error);
-      await message.reply('Sorry, I could not identify the image.');
+      await sendMessage(senderId, { text: 'Sorry, I could not identify the image.' }, pageAccessToken);
     }
   }
 };
