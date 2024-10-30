@@ -7,8 +7,11 @@ const { handlePostback } = require('./handles/handlePostback');
 const app = express();
 app.use(bodyParser.json());
 
-const VERIFY_TOKEN = 'pagebot'; // Your verification token
-const PAGE_ACCESS_TOKEN = fs.readFileSync('token.txt', 'utf8').trim(); // Read the page access token from file
+const VERIFY_TOKEN = 'pagebot';
+const PAGE_ACCESS_TOKEN = fs.readFileSync('token.txt', 'utf8').trim();
+
+// Log the access token for debugging (remove in production)
+console.log('Using page access token:', PAGE_ACCESS_TOKEN);
 
 // Webhook verification
 app.get('/webhook', (req, res) => {
@@ -19,9 +22,9 @@ app.get('/webhook', (req, res) => {
   if (mode && token) {
     if (mode === 'subscribe' && token === VERIFY_TOKEN) {
       console.log('WEBHOOK_VERIFIED');
-      res.status(200).send(challenge); // Respond with the challenge token
+      res.status(200).send(challenge);
     } else {
-      res.sendStatus(403); // Forbidden
+      res.sendStatus(403);
     }
   }
 });
@@ -34,24 +37,15 @@ app.post('/webhook', (req, res) => {
     body.entry.forEach(entry => {
       entry.messaging.forEach(event => {
         if (event.message) {
-          // Check if the message contains an image
-          if (event.message.attachments && event.message.attachments.length > 0) {
-            const attachment = event.message.attachments[0];
-            // Process the message with an image
-            handleMessage(event, PAGE_ACCESS_TOKEN);
-          } else if (event.message.text) {
-            // Process text messages
-            handleMessage(event, PAGE_ACCESS_TOKEN);
-          }
+          handleMessage(event, PAGE_ACCESS_TOKEN);
         } else if (event.postback) {
           handlePostback(event, PAGE_ACCESS_TOKEN);
         }
       });
     });
-
-    res.status(200).send('EVENT_RECEIVED'); // Acknowledge the event
+    res.status(200).send('EVENT_RECEIVED');
   } else {
-    res.sendStatus(404); // Not found
+    res.sendStatus(404);
   }
 });
 
@@ -60,4 +54,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-         
+                              
