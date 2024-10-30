@@ -2,8 +2,6 @@ const tf = require('@tensorflow/tfjs-node');
 const mobilenet = require('@tensorflow-models/mobilenet');
 const { createCanvas, loadImage } = require('canvas');
 
-const conversationHistory = {}; // Store conversation context for each user
-
 async function loadModel() {
   return await mobilenet.load();
 }
@@ -36,8 +34,6 @@ module.exports = {
     const imageUrl = args[0];
 
     try {
-      sendMessage(senderId, { text: '💬 | 𝙰𝚗𝚜𝚠𝚎𝚛𝚒𝚗𝚐...' }, pageAccessToken);
-
       // Classify the image
       const predictions = await classifyImage(imageUrl);
       const description = predictions
@@ -48,15 +44,7 @@ module.exports = {
       await sendMessage(senderId, { text: `I see: ${description}` }, pageAccessToken);
     } catch (error) {
       console.error('Error classifying image:', error);
-      sendMessage(senderId, { text: '⚠️ Oops! An error occurred while processing the image. Please try again later.' }, pageAccessToken);
+      sendMessage(senderId, { text: '⚠️ An error occurred while processing the image. Please try again later.' }, pageAccessToken);
     }
   }
 };
-
-function splitMessageIntoChunks(message, chunkSize) {
-  const chunks = [];
-  for (let i = 0; i < message.length; i += chunkSize) {
-    chunks.push(message.slice(i, i + chunkSize));
-  }
-  return chunks;
-}
