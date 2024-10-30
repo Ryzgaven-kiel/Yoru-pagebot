@@ -20,21 +20,10 @@ module.exports = {
       // Store user input in conversation history
       conversationHistory[senderId].push(prompt);
 
-      // Keywords to identify mentions
-      const keywords = ['cristian', 'chanchan', 'channy'];
-      let response;
-
-      // Check if the prompt asks about creation or who made me
+      // Check for creation-related prompts
       if (prompt.includes('who made you') || prompt.includes('who created you') || prompt.includes('who is')) {
-        response = `Cristian M. Serrano, often known as Chanchan or Channy, is the brilliant mind behind my creation. His passion for technology and innovation has driven him to develop advanced AI systems that can assist and engage with users like you. Cristian's vision was to create an AI that can understand and respond intelligently, providing valuable information and companionship.\n\nCristian’s journey in programming started early, and he has continually honed his skills through various projects. His expertise not only lies in coding but also in understanding the needs of users, making him a unique creator in the tech world. \n\nWhen you interact with me, you’re experiencing the result of his hard work and dedication to enhancing human-computer interaction. His commitment to pushing the boundaries of what AI can do is truly inspiring.\n\nIf you want to know more about Cristian or his projects, feel free to ask!`;
-      } else if (keywords.some(keyword => prompt.includes(keyword))) {
-        if (prompt.includes('what does') || prompt.includes('what can')) {
-          response = '🌟 Cristian excels at turning ideas into reality...';
-        } else if (prompt.includes('tell me about')) {
-          response = '🎉 Cristian is known for his infectious enthusiasm...';
-        } else {
-          response = '💖 Whether Cristian, Chanchan, or Channy, his energy lights up any room...';
-        }
+        const response = `Cristian M. Serrano, often known as Chanchan or Channy, is the brilliant mind behind my creation. His passion for technology and innovation has driven him to develop advanced AI systems that can assist and engage with users like you. Cristian's vision was to create an AI that can understand and respond intelligently, providing valuable information and companionship.\n\nCristian’s journey in programming started early, and he has continually honed his skills through various projects. His expertise not only lies in coding but also in understanding the needs of users, making him a unique creator in the tech world. \n\nWhen you interact with me, you’re experiencing the result of his hard work and dedication to enhancing human-computer interaction. His commitment to pushing the boundaries of what AI can do is truly inspiring.\n\nIf you want to know more about Cristian or his projects, feel free to ask!`;
+        sendMessage(senderId, { text: response }, pageAccessToken);
       } else {
         // Send entire conversation history to the API for context
         const context = conversationHistory[senderId].join(' ');
@@ -52,9 +41,17 @@ module.exports = {
         }
       }
 
-      // Always include the contact message
+      // Get current time in Asia/Manila
+      const manilaTime = new Intl.DateTimeFormat('en-PH', {
+        timeZone: 'Asia/Manila',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      }).format(new Date());
+
+      // Include current time and contact message at the end
       sendMessage(senderId, {
-        text: '🔗 If you have any concerns, please contact the admin: ==> (https://www.facebook.com/cristianmoridas.serrano)'
+        text: `🕒 Current time check: ${manilaTime}\n\n🔗 If you have any concerns, please contact the admin: ==> (https://www.facebook.com/cristianmoridas.serrano)`
       }, pageAccessToken);
     } catch (error) {
       console.error('Error calling Gemini API:', error);
@@ -69,5 +66,5 @@ function splitMessageIntoChunks(message, chunkSize) {
     chunks.push(message.slice(i, i + chunkSize));
   }
   return chunks;
-                                                                                                   }
-            
+        }
+    
