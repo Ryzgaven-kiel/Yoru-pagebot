@@ -13,16 +13,20 @@ module.exports = {
       // Keywords to identify mentions
       const keywords = ['cristian', 'chanchan', 'channy'];
 
-      // Response generation based on keywords
+      // Responses based on keywords
       if (keywords.some(keyword => prompt.includes(keyword))) {
         let response;
+
         if (prompt.includes('who is') || prompt.includes('what is')) {
-          response = 'Cristian M. Serrano, also known as Chanchan or Channy, is a talented individual with great creativity and skills in programming. If you have any concerns, please contact the admin: [Cristian\'s Profile](https://www.facebook.com/cristianmoridas.serrano)';
+          response = '✨ Cristian M. Serrano, also affectionately known as Chanchan or Channy, is a brilliant mind in the world of programming, crafting innovative solutions and inspiring many! For inquiries, reach out to the admin: [Cristian\'s Profile](https://www.facebook.com/cristianmoridas.serrano)';
         } else if (prompt.includes('what does') || prompt.includes('what can')) {
-          response = 'Cristian is known for his innovative ideas and dedication to his work. He is always willing to help others. For more information, contact the admin: [Cristian\'s Profile](https://www.facebook.com/cristianmoridas.serrano)';
+          response = '🌟 Cristian excels at turning ideas into reality, showcasing unmatched creativity in every project. He’s here to support and inspire! For more details, contact the admin: [Cristian\'s Profile](https://www.facebook.com/cristianmoridas.serrano)';
+        } else if (prompt.includes('tell me about')) {
+          response = '🎉 Cristian, aka Chanchan, is known for his infectious enthusiasm and dedication to excellence. Whether it’s coding or collaborating, he brings a spark to everything! If you want to learn more, reach out: [Cristian\'s Profile](https://www.facebook.com/cristianmoridas.serrano)';
         } else {
-          response = 'Cristian, Chanchan, or Channy—whatever you prefer to call him—always brings positivity and creativity to every project he undertakes! If you have any concerns, please contact the admin: [Cristian\'s Profile](https://www.facebook.com/cristianmoridas.serrano)';
+          response = '💖 Whether you call him Cristian, Chanchan, or Channy, one thing’s for sure: his positive energy and creativity light up any room! For any inquiries, feel free to connect: [Cristian\'s Profile](https://www.facebook.com/cristianmoridas.serrano)';
         }
+
         return sendMessage(senderId, { text: response }, pageAccessToken);
       }
 
@@ -41,11 +45,11 @@ module.exports = {
 
       // Always include the contact message
       sendMessage(senderId, {
-        text: 'If you have any concerns, please contact the admin: [Cristian\'s Profile](https://www.facebook.com/cristianmoridas.serrano)'
+        text: '🔗 If you have any concerns, please contact the admin: [Cristian\'s Profile](https://www.facebook.com/cristianmoridas.serrano)'
       }, pageAccessToken);
     } catch (error) {
       console.error('Error calling Gemini API:', error);
-      sendMessage(senderId, { text: 'An error occurred while processing your request.' }, pageAccessToken);
+      sendMessage(senderId, { text: '⚠️ Oops! An error occurred while processing your request. Please try again later.' }, pageAccessToken);
     }
   }
 };
