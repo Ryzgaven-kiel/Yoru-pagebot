@@ -1,9 +1,9 @@
 const axios = require('axios');
 
 module.exports = {
-  name: 'generateImage',
+  name: 'dewa',
   description: 'Generate an image based on a text prompt using OpenAI.',
-  author: 'ChatGPT',
+  author: 'Cristian',
 
   async execute(senderId, args, pageAccessToken, sendMessage) {
     const prompt = args.join(' ').trim();
