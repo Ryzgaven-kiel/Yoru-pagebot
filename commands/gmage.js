@@ -67,4 +67,4 @@ async function sendImage(senderId, url, pageAccessToken) {
 // Function to check if the query contains bad words
 function containsBadWords(query) {
   return [...badWords].some(badWord => query.toLowerCase().includes(badWord));
-}
+                                   }
