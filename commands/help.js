@@ -22,14 +22,15 @@ module.exports = {
         const command = require(path.join(commandsDir, commandFile));
         const commandDetails = `
 ━━━━━━━━━━━━━━
-𝙲𝚘𝚖𝚖𝚊𝚗𝚍 𝙽𝚊𝚖𝚎: ${command.name}
-𝙳𝚎𝚜𝚌𝚛𝚒𝚋𝚝𝚒𝚘𝚗: ${command.description}
-𝚄𝚜𝚊𝚐𝚎: ${command.usage}
+💡 **Command Name:** ${command.name}
+📝 **Description:** ${command.description}
+📖 **Usage:** ${command.usage}
+✨ **Example:** ${command.example ? command.example : "No example available."}
 ━━━━━━━━━━━━━━`;
         
         sendMessage(senderId, { text: commandDetails }, pageAccessToken);
       } else {
-        sendMessage(senderId, { text: `Command "${commandName}" not found.` }, pageAccessToken);
+        sendMessage(senderId, { text: `❌ Command "${commandName}" not found. Please check the command name and try again.` }, pageAccessToken);
       }
       return;
     }
@@ -39,16 +40,17 @@ module.exports = {
       return `│ - ${command.name}`;
     });
 
+    const commandsCount = commands.length;
     const helpMessage = `
 ━━━━━━━━━━━━━━
-𝙰𝚟𝚊𝚒𝚕𝚊𝚋𝚕𝚎 𝙲𝚘𝚖𝚖𝚊𝚗𝚍𝚜:
+🌟 **Available Commands: (${commandsCount})**
 ╭─╼━━━━━━━━╾─╮
 ${commands.join('\n')}
 ╰─━━━━━━━━━╾─╯
-Chat -help [name] 
-to see command details.
+📩 Type **help [command name]** to see command details.
 ━━━━━━━━━━━━━━`;
 
     sendMessage(senderId, { text: helpMessage }, pageAccessToken);
   }
 };
+  
