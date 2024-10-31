@@ -1,7 +1,9 @@
+const axios = require('axios');
+
 module.exports = {
   name: 'confess',
-  description: 'Confess something about a user using their profile link.',
-  author: 'Cristian',
+  description: 'Submit a confession about a user (to be posted publicly).',
+  author: 'YourName',
 
   async execute(senderId, args, pageAccessToken, sendMessage) {
     const profileLink = args[0]; // Expecting the first argument to be the profile link
@@ -11,10 +13,24 @@ module.exports = {
       return sendMessage(senderId, { text: 'Please provide a profile link and your confession.' }, pageAccessToken);
     }
 
-    // You can customize the response format
-    const responseMessage = `💬 Confession about [User](${profileLink}): ${confession}`;
+    // Format the confession message
+    const confessionMessage = `💬 Confession about ${profileLink}: ${confession}`;
 
-    // Send the confession message
-    sendMessage(senderId, { text: responseMessage }, pageAccessToken);
+    try {
+      // Post the confession to a designated group or page
+      const response = await axios.post(`https://graph.facebook.com/v11.0/{group_or_page_id}/feed`, {
+        message: confessionMessage
+      }, {
+        headers: {
+          'Authorization': `Bearer ${pageAccessToken}`
+        }
+      });
+
+      sendMessage(senderId, { text: 'Your confession has been submitted!' }, pageAccessToken);
+    } catch (error) {
+      console.error('Error posting confession:', error.response ? error.response.data : error.message);
+      sendMessage(senderId, { text: '⚠️ An error occurred while submitting your confession. Please try again later.' }, pageAccessToken);
+    }
   }
 };
+    
