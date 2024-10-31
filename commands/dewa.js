@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 // Paste your DALL-E API key here
-const API_KEY = 'sk-your-dalle-api-key-here';
+const API_KEY = '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';
 
 module.exports = {
   name: 'dewa',
