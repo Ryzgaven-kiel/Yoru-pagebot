@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 // Paste your DALL-E API key here
-const API_KEY = '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';
+const API_KEY = 'sk-your-dalle-api-key-here';
 
 module.exports = {
   name: 'dewa',
@@ -18,18 +18,23 @@ module.exports = {
     try {
       sendMessage(senderId, { text: '🖼️ | Generating your image...' }, pageAccessToken);
 
-      const response = await axios.post('https://api.openai.com/v1/images/generations', {
-        prompt: prompt,
-        n: 1,
-        size: '1024x1024'
+      // Use the chat completions endpoint for DALL-E 3
+      const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+        model: "gpt-4", // Assumes DALL-E 3 is accessible via GPT-4
+        messages: [
+          { role: "system", content: "You are DALL-E, an AI that generates images from text prompts." },
+          { role: "user", content: prompt }
+        ],
+        functions: [{ name: "generate_image", description: "Generates an image based on a prompt." }],
+        function_call: { name: "generate_image" }
       }, {
         headers: {
-          'Authorization': `Bearer ${API_KEY}`,  // Uses the API_KEY constant
+          'Authorization': `Bearer ${API_KEY}`,
           'Content-Type': 'application/json'
         }
       });
 
-      const imageUrl = response.data.data[0].url; // Extract the image URL from the response
+      const imageUrl = response.data.choices[0].message.function_call.arguments.url; // Adjust this line if the response structure differs
       await sendMessage(senderId, { attachment: { type: 'image', payload: { url: imageUrl } } }, pageAccessToken);
     } catch (error) {
       console.error('Error generating image:', error.response ? error.response.data : error.message);
