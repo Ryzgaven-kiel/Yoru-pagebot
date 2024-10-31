@@ -43,11 +43,11 @@ module.exports = {
     const commandsCount = commands.length;
     const helpMessage = `
 ━━━━━━━━━━━━━━
-🌟 **Available Commands: (${commandsCount})**
+🌟 Available Commands: (${commandsCount})
 ╭─╼━━━━━━━━╾─╮
 ${commands.join('\n')}
 ╰─━━━━━━━━━╾─╯
-📩 Type **help [command name]** to see command details.
+📩 Type help [command name] to see command details.
 ━━━━━━━━━━━━━━`;
 
     sendMessage(senderId, { text: helpMessage }, pageAccessToken);
