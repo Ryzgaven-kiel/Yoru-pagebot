@@ -1,6 +1,12 @@
 const { callGeminiAPI } = require('../utils/callGeminiAPI');
 
-const conversationHistory = {}; // Store conversation context for each user
+// Sample fun facts or quotes to enhance interaction
+const funFacts = [
+  "Did you know? The inventor of the frisbee was turned into a frisbee after he died.",
+  "Fun Fact: Honey never spoils! Archaeologists have found pots of honey in ancient Egyptian tombs that are over 3000 years old and still perfectly edible.",
+  "Quote of the Day: 'The only way to do great work is to love what you do.' - Steve Jobs",
+  "Did you know? Bananas are berries, but strawberries are not!",
+];
 
 module.exports = {
   name: 'yoru',
@@ -12,22 +18,13 @@ module.exports = {
     try {
       sendMessage(senderId, { text: '💬 | 𝙰𝚗𝚜𝚠𝚎𝚛𝚒𝚗𝚐...' }, pageAccessToken);
 
-      // Initialize conversation history if it doesn't exist
-      if (!conversationHistory[senderId]) {
-        conversationHistory[senderId] = [];
-      }
-
-      // Store user input in conversation history
-      conversationHistory[senderId].push(prompt);
-
       // Check for creation-related prompts
       if (prompt.includes('who made you') || prompt.includes('who created you') || prompt.includes('who is')) {
-        const response = `Cristian M. Serrano, often known as Chanchan or Channy, is the brilliant mind behind my creation. His passion for technology and innovation has driven him to develop advanced AI systems that can assist and engage with users like you. Cristian's vision was to create an AI that can understand and respond intelligently, providing valuable information and companionship.\n\nCristian’s journey in programming started early, and he has continually honed his skills through various projects. His expertise not only lies in coding but also in understanding the needs of users, making him a unique creator in the tech world. \n\nWhen you interact with me, you’re experiencing the result of his hard work and dedication to enhancing human-computer interaction. His commitment to pushing the boundaries of what AI can do is truly inspiring.\n\nIf you want to know more about Cristian or his projects, feel free to ask!`;
+        const response = `🤖 **I was created by Cristian M. Serrano**, also known as Chanchan or Channy. His dedication to technology and innovation inspired the development of advanced AI systems like me. If you want to know more about him or his projects, just ask!`;
         sendMessage(senderId, { text: response }, pageAccessToken);
       } else {
-        // Send entire conversation history to the API for context
-        const context = conversationHistory[senderId].join(' ');
-        const responseFromAPI = await callGeminiAPI(context + ' ' + prompt);
+        // Directly call the API with the user's prompt without conversation history
+        const responseFromAPI = await callGeminiAPI(prompt);
 
         // Split the response into chunks if it exceeds 2000 characters
         const maxMessageLength = 2000;
@@ -49,13 +46,16 @@ module.exports = {
         second: '2-digit',
       }).format(new Date());
 
+      // Include a fun fact or quote at the end
+      const randomFact = funFacts[Math.floor(Math.random() * funFacts.length)];
+
       // Include current time and contact message at the end
       sendMessage(senderId, {
-        text: `🕒 Current time check: ${manilaTime}\n\n🔗 If you have any concerns, please contact the admin: ==> (https://www.facebook.com/cristianmoridas.serrano)`
+        text: `🕒 **Current time:** ${manilaTime}\n\n🔗 If you have any concerns, please contact the admin: [Admin](https://www.facebook.com/cristianmoridas.serrano)\n\n✨ **Fun Fact:** ${randomFact}`
       }, pageAccessToken);
     } catch (error) {
       console.error('Error calling Gemini API:', error);
-      sendMessage(senderId, { text: '⚠️ Oops! An error occurred while processing your request. Please try again later.' }, pageAccessToken);
+      sendMessage(senderId, { text: '⚠️ Oops! An error occurred while processing your request. Here are some suggestions:\n1. Ask about my creator.\n2. Request a fun fact.\n3. Inquire about any general topic.' }, pageAccessToken);
     }
   }
 };
@@ -66,5 +66,5 @@ function splitMessageIntoChunks(message, chunkSize) {
     chunks.push(message.slice(i, i + chunkSize));
   }
   return chunks;
-        }
-    
+    }
+        
