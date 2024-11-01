@@ -11,6 +11,19 @@ module.exports = {
     const commandsDir = path.join(__dirname, '../commands');
     const commandFiles = fs.readdirSync(commandsDir).filter(file => file.endsWith('.js'));
 
+    // Separate commands into educational and other
+    const educationalCommands = [];
+    const otherCommands = [];
+
+    commandFiles.forEach(file => {
+      const command = require(path.join(commandsDir, file));
+      if (command.category === 'educational') {
+        educationalCommands.push(command);
+      } else {
+        otherCommands.push(command);
+      }
+    });
+
     if (args.length > 0) {
       const commandName = args[0].toLowerCase();
       const commandFile = commandFiles.find(file => {
@@ -35,17 +48,20 @@ module.exports = {
       return;
     }
 
-    const commands = commandFiles.map(file => {
-      const command = require(path.join(commandsDir, file));
-      return `│ - ${command.name}`;
-    });
+    // Prepare the help message for both categories
+    const educationalCommandsList = educationalCommands.map(command => `│ - ${command.name}`).join('\n');
+    const otherCommandsList = otherCommands.map(command => `│ - ${command.name}`).join('\n');
 
-    const commandsCount = commands.length;
     const helpMessage = `
 ━━━━━━━━━━━━━━
-🌟 Available Commands: (${commandsCount})
+🌟 Available Educational Commands:
 ╭─╼━━━━━━━━╾─╮
-${commands.join('\n')}
+${educationalCommandsList || 'No educational commands available.'}
+╰─━━━━━━━━━╾─╯
+
+🌟 Available Other Commands:
+╭─╼━━━━━━━━╾─╮
+${otherCommandsList || 'No other commands available.'}
 ╰─━━━━━━━━━╾─╯
 📩 Type help [command name] to see command details.
 ━━━━━━━━━━━━━━`;
@@ -53,4 +69,3 @@ ${commands.join('\n')}
     sendMessage(senderId, { text: helpMessage }, pageAccessToken);
   }
 };
-  
