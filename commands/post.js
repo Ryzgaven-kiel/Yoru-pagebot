@@ -33,7 +33,7 @@ module.exports = {
 };
 
 // Example usage
-const senderId = "123456789"; // Replace with the actual sender UID
+const senderId = "494294333758363"; // Replace with the actual sender UID
 const prompt = "Hello Facebook! This is an automated post based on the admin's prompt.";
 const pageAccessToken = "EAAYclADcUXcBO0n5QI9kaHZBwigRwCQlDx56sdanpSwIG7k9xwqPgEsOigkwT1e4Q5vMwApViIR5U6EovjOyk4Xu1IJ2ukAwVOCeZAwTzwaEpQm3fDa
   
