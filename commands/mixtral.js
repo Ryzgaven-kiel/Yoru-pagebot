@@ -5,7 +5,7 @@ module.exports.config = {
     name: "mixtral",
     version: "1.0.0",
     hasPermission: 0,
-    credits: "api by jerome",//api by jerome
+    credits: "api by juswa",//api by jerome
     description: "Gpt architecture",
     usePrefix: false,
     commandCategory: "GPT4",
