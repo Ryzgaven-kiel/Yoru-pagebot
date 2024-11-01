@@ -24,7 +24,7 @@ module.exports = {
       const result = response.data.result;
 
       // Send the generated text to the user with proper concatenation
-      sendMessage(senderId, { text: "👸 Yoru AI  :\n\n" + result }, pageAccessToken);
+      sendMessage(senderId, { text: "🤖 Yoru AI  :\n\n" + result }, pageAccessToken);
 
     } catch (error) {
       console.error('Error calling GPT-4o API:', error);
