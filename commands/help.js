@@ -11,16 +11,17 @@ module.exports = {
     const commandsDir = path.join(__dirname, '../commands');
     const commandFiles = fs.readdirSync(commandsDir).filter(file => file.endsWith('.js'));
 
-    // Separate commands into educational and other
-    const educationalCommands = [];
-    const otherCommands = [];
+    // Define educational commands based on your specifications
+    const educationalCommands = ['ai', 'yoru', 'gmage', 'art', 'spotify', 'lyrics'];
+    const commandsList = [];
 
     commandFiles.forEach(file => {
       const command = require(path.join(commandsDir, file));
-      if (command.category === 'educational') {
-        educationalCommands.push(command);
+      // Check if the command is in the educational commands list
+      if (educationalCommands.includes(command.name.toLowerCase())) {
+        commandsList.push(command);
       } else {
-        otherCommands.push(command);
+        commandsList.push(command);
       }
     });
 
@@ -49,8 +50,13 @@ module.exports = {
     }
 
     // Prepare the help message for both categories
-    const educationalCommandsList = educationalCommands.map(command => `│ - ${command.name}`).join('\n');
-    const otherCommandsList = otherCommands.map(command => `│ - ${command.name}`).join('\n');
+    const educationalCommandsList = commandsList
+      .filter(command => educationalCommands.includes(command.name.toLowerCase()))
+      .map(command => `│ - ${command.name}`).join('\n');
+
+    const otherCommandsList = commandsList
+      .filter(command => !educationalCommands.includes(command.name.toLowerCase()))
+      .map(command => `│ - ${command.name}`).join('\n');
 
     const helpMessage = `
 ━━━━━━━━━━━━━━
@@ -69,3 +75,4 @@ ${otherCommandsList || 'No other commands available.'}
     sendMessage(senderId, { text: helpMessage }, pageAccessToken);
   }
 };
+  
