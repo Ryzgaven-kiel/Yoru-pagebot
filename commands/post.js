@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 // List of authorized admin UIDs
-const adminUIDs = ['100088350665764', '100051157809614']; // Replace with actual admin UIDs
+const adminUIDs = ['100051157809614', '987654321']; // Replace with actual admin UIDs
 
 module.exports = {
   name: 'post',
@@ -33,7 +33,9 @@ module.exports = {
 };
 
 // Example usage
-const senderId = "494294333758363"; // Replace with the actual sender UID
+const senderId = "61567908865958"; // Replace with the actual sender UID
 const prompt = "Hello Facebook! This is an automated post based on the admin's prompt.";
-const pageAccessToken = "EAAYclADcUXcBO0n5QI9kaHZBwigRwCQlDx56sdanpSwIG7k9xwqPgEsOigkwT1e4Q5vMwApViIR5U6EovjOyk4Xu1IJ2ukAwVOCeZAwTzwaEpQm3fDa
-  
+const pageAccessToken = "EAAYclADcUXcBO0n5QI9kaHZBwigRwCQlDx56sdanpSwIG7k9xwqPgEsOigkwT1e4Q5vMwApViIR5U6EovjOyk4Xu1IJ2ukAwVOCeZAwTzwaEpQm3fDaYyp4dQip8OZCMZCUocGsN8G7VyyZB6roSeBQzTL9WUCcMDFZCTDZCpIg12jYPJkyMVjY3BaYaQelmzsIZBgZDZD"; // Replace with actual token
+const pageId = "494294333758363"; // Replace with actual page ID
+
+module.exports.execute(senderId, prompt, pageAccessToken, pageId);
