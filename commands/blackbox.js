@@ -27,7 +27,7 @@ module.exports = {
       // Prepare API parameters
       const conversationId = senderId; // Use senderId as conversation ID to maintain user context
       const model = 'gpt-4o'; // Specify the model
-      const apiUrl = `https://cristian-api.onrender.com/api/blackbox?text=${encodeURIComponent(fullPrompt)}&conversationId=${conversationId}&model=${model}`;
+      const apiUrl = `https://joshweb.click/blackbox?prompt=hi`;
       
       // Make the API call
       const response = await axios.get(apiUrl);
