@@ -1,36 +1,75 @@
+const express = require('express');
 const axios = require('axios');
-const { sendMessage } = require('../handles/sendMessage');
 
-module.exports = {
-  name: 'blackbox',
-  description: 'Generate text using Blackbox AI',
-  author: 'Your Name',
-  async execute(senderId, args, pageAccessToken) {
-    const text = args.join(' '); // Join the command arguments to form the input text
-    const conversationId = 'unique_conversation_id'; // Change this to generate a unique ID for each conversation or use a persistent one if desired
-    const model = 'gpt-4o'; // Specify the model to be used
+const app = express();
+const port = process.env.PORT || 3000; // Use environment variable or default to 3000
 
-    if (!text) {
-      sendMessage(senderId, { text: "Usage: /blackbox <your question>" }, pageAccessToken);
-      return;
-    }
+class BlackboxAI {
+  constructor() {
+    this.apiUrl = 'https://cristian-api.onrender.com/api/blackbox'; // Updated API URL
+  }
 
-    // Inform the user that content is being generated
-    sendMessage(senderId, { text: 'Generating response, please wait...' }, pageAccessToken);
-
+  async sendMessage(text, conversationId, model) {
+    const apiUrl = `${this.apiUrl}?text=${encodeURIComponent(text)}&conversationId=${conversationId}&model=${model}`;
+    
     try {
-      // Construct the API URL for Blackbox
-      const apiUrl = `https://cristian-api.onrender.com/api/blackbox?text=${encodeURIComponent(text)}&conversationId=${conversationId}&model=${model}`;
-      
-      // Make the GET request to the Blackbox API
       const response = await axios.get(apiUrl);
-      const result = response.data.response; // Extract the response data
-
-      // Send the generated text to the user
-      sendMessage(senderId, { text: "🤖 Blackbox AI:\n\n" + result }, pageAccessToken);
+      if (response.data && response.data.response) {
+        return response.data.response;
+      } else {
+        throw new Error('There was an error generating the response. Please try again later.');
+      }
     } catch (error) {
-      console.error('Error calling Blackbox API:', error);
-      sendMessage(senderId, { text: 'There was an error generating the response. Please try again later.' }, pageAccessToken);
+      console.error('Error communicating with Blackbox AI:', error);
+      throw new Error('There was an error generating the response. Please try again later.');
     }
   }
+}
+
+// Initialize BlackboxAI
+const blackboxAI = new BlackboxAI();
+
+// Define the command and the API endpoint
+app.get('/api/chat', async (req, res) => {
+  const { text, conversationId, model } = req.query;
+
+  // Validate the required parameters
+  if (!text || !conversationId || !model) {
+    return res.status(400).json({ error: 'Text, conversationId, and model are required' });
+  }
+
+  try {
+    const response = await blackboxAI.sendMessage(text, conversationId, model);
+    res.json({ response });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Command structure to execute Blackbox AI
+const command = {
+  name: 'blackbox',
+  description: 'Interact with the Blackbox AI chat model',
+  execute: async (text, conversationId, model) => {
+    const response = await blackboxAI.sendMessage(text, conversationId, model);
+    return response;
+  }
 };
+
+// Example command execution (this part is just to illustrate how you might use the command)
+app.get('/api/executeCommand', async (req, res) => {
+  const { text, conversationId, model } = req.query;
+  
+  try {
+    const commandResponse = await command.execute(text, conversationId, model);
+    res.json({ commandResponse });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Start the server
+app.listen(port, () => {
+  console.log(`Server is running at http://localhost:${port}`);
+});
+    
