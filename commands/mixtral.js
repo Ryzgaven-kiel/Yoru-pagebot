@@ -1,12 +1,11 @@
-const moment = require("moment-timezone");
 const axios = require("axios");
 
 module.exports.config = {
   name: "mixtral",
-  version: "1.0.0",
+  version: "1.1.0",
   hasPermission: 0,
   credits: "nones",
-  description: "GPT architecture",
+  description: "Advanced GPT architecture with interactive features",
   usePrefix: false,
   commandCategory: "GPT4",
   cooldowns: 5,
@@ -17,46 +16,54 @@ module.exports.run = async function ({ api, event, args }) {
     const { messageID, messageReply, threadID } = event;
     let prompt = args.join(" ");
 
-    // Combine reply message with args if present
+    // Combine replied message with args if present
     if (messageReply) {
       const repliedMessage = messageReply.body;
       prompt = `${repliedMessage} ${prompt}`;
     }
 
-    // Check if the prompt is empty
+    // Provide a default prompt if none is provided
     if (!prompt) {
       return api.sendMessage(
-        "🐱 Hello, I am Mixtral trained by Google. How may I assist you today?",
+        "🐱 Hello! I am Mixtral, your AI assistant trained by Google. How may I assist you today?",
         threadID,
         messageID
       );
     }
 
-    // Inform the user that Mixtral is processing
-    api.sendMessage("🗨️ | Mixtral is searching, please wait...", threadID);
+    // Notify the user that Mixtral is processing the request
+    api.sendMessage("🗨️ | Mixtral is processing your request, please wait...", threadID);
 
-    // Add a delay for user experience
+    // Introduce a delay for user experience
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    // Call the API with the provided prompt
+    // Call the GPT API with the user's prompt
     const gpt4_api = `https://jerai.onrender.com/chat?query=${encodeURIComponent(prompt)}&model=mixtral`;
     const response = await axios.get(gpt4_api);
 
-    // Get current date and time in Manila timezone
-    const manilaTime = moment.tz("Asia/Manila").format("MMMM D, YYYY h:mm A");
-
-    // Handle API response
+    // Check for valid response from API
     if (response.data && response.data.message) {
       const generatedText = response.data.message;
+      const currentDateTime = new Date().toLocaleString();
+
+      // Enhance the output with a random trivia fact or joke
+      const triviaFacts = [
+        "Did you know? Honey never spoils! Archaeologists have found pots of honey in ancient Egyptian tombs that are over 3000 years old.",
+        "Why don't scientists trust atoms? Because they make up everything!",
+        "A group of flamingos is called a 'flamboyance.'",
+      ];
+      const randomTrivia = triviaFacts[Math.floor(Math.random() * triviaFacts.length)];
+
+      // Send the response along with the trivia fact
       api.sendMessage(
-        `🎓 Mixtral (AI) Answer\n━━━━━━━━━━━━━━━━\n\n🖋️ Ask: '${prompt}'\n\nAnswer: ${generatedText}\n\n🗓️ Date & Time:\n.⋅ ۵ ${manilaTime} ۵ ⋅.\n\n━━━━━━━━━━━━━━━━`,
+        `🎓 Mixtral (AI) Answer\n━━━━━━━━━━━━━━━━\n\n🖋️ **Ask:** '${prompt}'\n\n**Answer:** ${generatedText}\n\n🗓️ **Date & Time:** ${currentDateTime}\n\n🎉 **Fun Fact:** ${randomTrivia}\n\n━━━━━━━━━━━━━━━━`,
         threadID,
         messageID
       );
     } else {
       console.error("API response did not contain expected data:", response.data);
       api.sendMessage(
-        `❌ An error occurred while generating the text response. Please try again later.`,
+        `❌ An error occurred while generating the response. Please try again later.`,
         threadID,
         messageID
       );
@@ -70,4 +77,3 @@ module.exports.run = async function ({ api, event, args }) {
     );
   }
 };
-          
