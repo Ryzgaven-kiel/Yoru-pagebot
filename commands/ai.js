@@ -4,7 +4,7 @@ const { sendMessage } = require('../handles/sendMessage');
 module.exports = {
   name: 'ai',
   description: 'Generate text using GPT-4o API',
-  author: 'Carl John Villavito',
+  author: 'chatgpt',
   async execute(senderId, args, pageAccessToken) {
     const prompt = args.join(' ');
 
@@ -24,7 +24,7 @@ module.exports = {
       const result = response.data.result;
 
       // Send the generated text to the user with proper concatenation
-      sendMessage(senderId, { text: "👸 LOVELY AI  :\n\n" + result }, pageAccessToken);
+      sendMessage(senderId, { text: "👸 Yoru AI  :\n\n" + result }, pageAccessToken);
 
     } catch (error) {
       console.error('Error calling GPT-4o API:', error);
