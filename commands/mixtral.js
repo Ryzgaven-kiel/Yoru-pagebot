@@ -1,11 +1,10 @@
-const moment = require("moment-timezone");
 const axios = require('axios');
 
 module.exports.config = {
     name: "mixtral",
     version: "1.0.0",
     hasPermission: 0,
-    credits: "api by juswa",//api by jerome
+    credits: "api by jerome", //api by jerome
     description: "Gpt architecture",
     usePrefix: false,
     commandCategory: "GPT4",
@@ -31,8 +30,11 @@ module.exports.run = async function ({ api, event, args }) {
         await new Promise(resolve => setTimeout(resolve, 2000)); // Adjust the delay time as needed
 
         const gpt4_api = `https://joshweb.click/api/mixtral-8b?q=hi%20who%20are%20you?`;
-        const manilaTime = moment.tz('Asia/Manila');
-        const formattedDateTime = manilaTime.format('MMMM D, YYYY h:mm A');
+
+        // Get the current date and time in the server's local timezone
+        const now = new Date();
+        const options = { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
+        const formattedDateTime = now.toLocaleString('en-US', options);
 
         const response = await axios.get(gpt4_api);
 
@@ -50,3 +52,4 @@ module.exports.run = async function ({ api, event, args }) {
         api.sendMessage(`❌ An error occurred while generating the text response. Please try again later. Error details: ${error.message}`, event.threadID, event.messageID);
     }
 };
+                         
