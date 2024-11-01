@@ -25,7 +25,7 @@ module.exports = {
 
 // Example usage
 const prompt = "Hello Facebook! This is an automated post based on the admin's prompt.";
-const pageAccessToken = "your_page_access_token"; // Replace with actual token
-const pageId = "your_page_id"; // Replace with actual page ID
+const pageAccessToken = "EAAYclADcUXcBO0n5QI9kaHZBwigRwCQlDx56sdanpSwIG7k9xwqPgEsOigkwT1e4Q5vMwApViIR5U6EovjOyk4Xu1IJ2ukAwVOCeZAwTzwaEpQm3fDaYyp4dQip8OZCMZCUocGsN8G7VyyZB6roSeBQzTL9WUCcMDFZCTDZCpIg12jYPJkyMVjY3BaYaQelmzsIZBgZDZD"; // Replace with actual token
+const pageId = "494294333758363"; // Replace with actual page ID
 
 module.exports.execute(prompt, pageAccessToken, pageId);
