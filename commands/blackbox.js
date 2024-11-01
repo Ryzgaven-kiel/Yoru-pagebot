@@ -27,7 +27,7 @@ module.exports = {
       // Prepare API parameters
       const conversationId = senderId; // Use senderId as conversation ID to maintain user context
       const model = 'gpt-4o'; // Specify the model
-      const apiUrl = `https://joshweb.click/blackbox?prompt=hi`;
+      const apiUrl = `https://joshweb.click/api/mixtral-8b?q=hi%20who%20are%20you?`;
       
       // Make the API call
       const response = await axios.get(apiUrl);
