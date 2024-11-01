@@ -1,49 +1,52 @@
+const moment = require("moment-timezone");
 const axios = require('axios');
-const { sendMessage } = require('../handles/sendMessage');
 
-// Simulated database for user context (could be replaced with a real database)
-const userContext = {};
+module.exports.config = {
+    name: "mixtral",
+    version: "1.0.0",
+    hasPermission: 0,
+    credits: "api by jerome",//api by jerome
+    description: "Gpt architecture",
+    usePrefix: false,
+    commandCategory: "GPT4",
+    cooldowns: 5,
+};
 
-module.exports = {
-  name: 'blackbox',
-  description: 'Generate text using Blackbox AI API with contextual memory',
-  author: 'chatgpt',
-  async execute(senderId, args, pageAccessToken) {
-    const prompt = args.join(' ');
-
-    if (prompt === "") {
-      sendMessage(senderId, { text: "Usage: /blackbox <question>" }, pageAccessToken);
-      return; // Ensure the function doesn't continue
-    }
-
-    // Inform the user that content is being generated
-    sendMessage(senderId, { text: '🤖 Blackbox is generating a response, please wait...' }, pageAccessToken);
-
+module.exports.run = async function ({ api, event, args }) {
     try {
-      // Retrieve previous context for the user, if available
-      const previousContext = userContext[senderId] || '';
-      const fullPrompt = `${previousContext} ${prompt}`.trim();
+        const { messageID, messageReply } = event;
+        let prompt = args.join(' ');
 
-      // Prepare API parameters
-      const conversationId = senderId; // Use senderId as conversation ID to maintain user context
-      const model = 'gpt-4o'; // Specify the model
-      const apiUrl = `https://joshweb.click/api/mixtral-8b?q=hi%20who%20are%20you?`;
-      
-      // Make the API call
-      const response = await axios.get(apiUrl);
+        if (messageReply) {
+            const repliedMessage = messageReply.body;
+            prompt = `${repliedMessage} ${prompt}`;
+        }
 
-      // Check if the response is valid and retrieve the result
-      const result = response.data.response || 'There was an error generating the response. Please try again later.';
+        if (!prompt) {
+            return api.sendMessage('🐱 𝙷𝚎𝚕𝚕𝚘, 𝙸 𝚊𝚖 𝙼𝚒𝚡𝚝𝚛𝚊𝚕 𝚝𝚛𝚊𝚒𝚗𝚎𝚍 𝚋𝚢 𝙶𝚘𝚘𝚐𝚕𝚎\n\n𝙷𝚘𝚠 𝚖𝚊𝚢 𝚒 𝚊𝚜𝚜𝚒𝚜𝚝 𝚢𝚘𝚞 𝚝𝚘𝚍𝚊𝚢?', event.threadID, messageID);
+        }
+        api.sendMessage('🗨️ |  𝙼𝚒𝚡𝚝𝚛𝚊𝚕 𝚒𝚜 𝚜𝚎𝚊𝚛𝚌𝚑𝚒𝚗𝚐, 𝙿𝚕𝚎𝚊𝚜𝚎 𝚠𝚊𝚒𝚝...', event.threadID);
 
-      // Send the generated text to the user with proper concatenation
-      sendMessage(senderId, { text: "🤖 Blackbox AI:\n\n" + result }, pageAccessToken);
+        // Delay
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Adjust the delay time as needed
 
-      // Update the user context with the new prompt and response for future interactions
-      userContext[senderId] = `${fullPrompt}\n${result}`;
+        const gpt4_api = `https://joshweb.click/api/mixtral-8b?q=hi%20who%20are%20you?`;
+        const manilaTime = moment.tz('Asia/Manila');
+        const formattedDateTime = manilaTime.format('MMMM D, YYYY h:mm A');
 
+        const response = await axios.get(gpt4_api);
+
+        if (response.data && response.data.message) {
+            const generatedText = response.data.message;
+
+            // Ai Answer Here
+            api.sendMessage(`🎓  𝐌𝐢𝐱𝐭𝐫𝐚𝐥 (𝐀𝐢) 𝐀𝐧𝐬𝐰𝐞𝐫\n━━━━━━━━━━━━━━━━\n\n🖋️ 𝙰𝚜𝚔: '${prompt}'\n\n𝗔𝗻𝘀𝘄𝗲𝗿: ${generatedText}\n\n🗓️ | ⏰ 𝙳𝚊𝚝𝚎 & 𝚃𝚒𝚖𝚎:\n.⋅ ۵ ${formattedDateTime} ۵ ⋅.\n\n━━━━━━━━━━━━━━━━`, event.threadID, messageID);
+        } else {
+            console.error('API response did not contain expected data:', response.data);
+            api.sendMessage(`❌ An error occurred while generating the text response. Please try again later. Response data: ${JSON.stringify(response.data)}`, event.threadID, messageID);
+        }
     } catch (error) {
-      console.error('Error calling Blackbox API:', error);
-      sendMessage(senderId, { text: 'There was an error generating the content. Please try again later.' }, pageAccessToken);
+        console.error('Error:', error);
+        api.sendMessage(`❌ An error occurred while generating the text response. Please try again later. Error details: ${error.message}`, event.threadID, event.messageID);
     }
-  }
 };
