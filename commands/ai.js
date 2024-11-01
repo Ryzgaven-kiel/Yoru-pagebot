@@ -24,7 +24,7 @@ module.exports = {
       const previousContext = userContext[senderId] || '';
       const fullPrompt = `${previousContext} ${prompt}`.trim();
 
-      const apiUrl = `https://cristian-api.onrender.com/api/blackbox?text=Hello%20AI&conversationId=435HGS&model=gpt-4o`;
+      const apiUrl = `https://joshweb.click/api/gpt-4o?q=${encodeURIComponent(fullPrompt)}&uid=${senderId}`;
       const response = await axios.get(apiUrl);
 
       // Extract the result from the response
