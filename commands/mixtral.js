@@ -18,7 +18,7 @@ module.exports = {
 
     // Join the arguments to form the question
     const question = args.join(' ');
-    const apiUrl = `https://api.kenliejugarap.com/ministral-3b-paid/?question=${encodeURIComponent(question)}`;
+    const apiUrl = `https://api.kenliejugarap.com/ministral-8b-paid/?question=Hello%20from%20api.kenliejugarap.com`;
 
     // Notify user that the answer is being fetched
     await sendMessage(senderId, { text: '⌛ Generating answer, please wait...' }, pageAccessToken);
