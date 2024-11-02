@@ -1,54 +1,51 @@
 const axios = require('axios');
-const { sendMessage } = require('../handles/sendMessage');
 
-module.exports = {
-  name: 'mixtral',
-  description: 'Answers questions using the Ministral AI model.',
-  usage: 'mixtral <question>',
-  author: 'cristian',
+// Define the command for Pagebot
+module.exports.config = {
+    name: "mixtral",
+    version: "1.0.0",
+    hasPermission: 0,
+    credits: "Your Name",
+    description: "Answers questions using the Ministral AI model.",
+    commandCategory: "AI",
+    cooldowns: 5,
+};
 
-  async execute(senderId, args, pageAccessToken) {
-    // Check if a question is provided
+module.exports.run = async function({ api, event, args }) {
+    const { threadID, messageID, senderID } = event;
+
+    // Check if a question was provided
     if (!args || args.length === 0) {
-      await sendMessage(senderId, {
-        text: '❌ Please provide a question to ask.\n\nUsage: mixtral <your question>'
-      }, pageAccessToken);
-      return;
+        api.sendMessage('❌ Please provide a question to ask.\n\nUsage: mixtral <your question>', threadID, messageID);
+        return;
     }
 
-    // Join the arguments to form the question
+    // Join arguments to form the question
     const question = args.join(' ');
-    const apiUrl = `https://api.kenliejugarap.com/ministral-8b-paid/?question=Hello%20from%20api.kenliejugarap.com`;
+    const apiUrl = `https://api.kenliejugarap.com/ministral-3b-paid/?question=${encodeURIComponent(question)}`;
 
-    // Notify user that the answer is being fetched
-    await sendMessage(senderId, { text: '⌛ Generating answer, please wait...' }, pageAccessToken);
+    // Notify the user that the answer is being fetched
+    api.sendMessage('⌛ Generating answer, please wait...', threadID, messageID);
 
     try {
-      // Make the API request
-      const response = await axios.get(apiUrl);
+        // Send the request to the API
+        const response = await axios.get(apiUrl);
 
-      // Check if a valid response is received
-      if (response.data && response.data.answer) {
-        const answer = response.data.answer;
+        // Check if the response contains the expected data
+        if (response.data && response.data.answer) {
+            const answer = response.data.answer;
 
-        // Send the answer back to the user
-        await sendMessage(senderId, {
-          text: `🤖 Mixtral Answer:\n\n${answer}`
-        }, pageAccessToken);
-      } else {
-        console.error('API response did not contain expected data:', response.data);
-        await sendMessage(senderId, {
-          text: '❌ An error occurred while retrieving the answer. Please try again later.'
-        }, pageAccessToken);
-      }
+            // Send the answer back to the user
+            api.sendMessage(`🤖 Mixtral Answer:\n\n${answer}`, threadID, messageID);
+        } else {
+            console.error('API response did not contain expected data:', response.data);
+            api.sendMessage('❌ An error occurred while retrieving the answer. Please try again later.', threadID, messageID);
+        }
     } catch (error) {
-      console.error('Error fetching answer from Mixtral API:', error);
+        console.error('Error fetching answer from Mixtral API:', error);
 
-      // Notify the user of the error
-      await sendMessage(senderId, {
-        text: '❌ There was an error processing your request. Please try again later.'
-      }, pageAccessToken);
+        // Notify the user of the error
+        api.sendMessage('❌ There was an error processing your request. Please try again later.', threadID, messageID);
     }
-  }
 };
-        
+                    
