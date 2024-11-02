@@ -2,9 +2,9 @@ const axios = require('axios');
 
 // Define and export the command for Pagebot
 module.exports = {
-    name: "mixtral",
-    description: "Ask questions and receive answers using the Mixtral AI model.",
-    usage: "mixtral <your question>",
+    name: "misteal",
+    description: "Ask questions and receive answers using the Misteal AI model.",
+    usage: "misteal <your question>",
     author: "Your Name",
     version: "1.0.0",
     hasPermission: 0,
@@ -17,14 +17,14 @@ module.exports = {
         if (!args || args.length === 0) {
             // Send a message requesting a question if missing
             await sendMessage(senderId, {
-                text: '❌ Please provide a question to ask Mixtral.\n\nUsage: mixtral <your question>'
+                text: '❌ Please provide a question to ask Misteal.\n\nUsage: misteal <your question>'
             }, pageAccessToken);
             return; // Exit the function if no question is provided
         }
 
         // Join arguments to form the question
         const question = args.join(' ');
-        const apiUrl = `https://api.kenliejugarap.com/ministral-8b-paid/?question=Hello%20from%20api.kenliejugarap.com`;
+        const apiUrl = `https://api.kenliejugarap.com/mistral/?question=${encodeURIComponent(question)}`;
 
         // Notify the user that the answer is being fetched
         await sendMessage(senderId, { text: '⌛ Generating answer, please wait...' }, pageAccessToken);
@@ -39,7 +39,7 @@ module.exports = {
 
                 // Send the generated answer back to the user
                 await sendMessage(senderId, {
-                    text: `🤖 Mixtral Answer:\n\n${answer}`
+                    text: `🤖 Misteal Answer:\n\n${answer}`
                 }, pageAccessToken);
             } else {
                 console.error('API response did not contain expected data:', response.data);
@@ -50,7 +50,7 @@ module.exports = {
                 }, pageAccessToken);
             }
         } catch (error) {
-            console.error('Error fetching answer from Mixtral API:', error);
+            console.error('Error fetching answer from Misteal API:', error);
 
             // Notify user of the error
             await sendMessage(senderId, {
