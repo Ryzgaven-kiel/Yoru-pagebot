@@ -2,9 +2,9 @@ const axios = require('axios');
 
 // Define and export the command for Pagebot
 module.exports = {
-    name: "misteal",
+    name: "mistral",
     description: "Ask questions and receive answers using the Misteal AI model.",
-    usage: "misteal <your question>",
+    usage: "mistral <your question>",
     author: "Your Name",
     version: "1.0.0",
     hasPermission: 0,
