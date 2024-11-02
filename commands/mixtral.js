@@ -2,9 +2,9 @@ const axios = require('axios');
 
 // Define and export the command for Pagebot
 module.exports = {
-    name: "mistral",
+    name: "misteal",
     description: "Ask questions and receive answers using the Misteal AI model.",
-    usage: "mistral <your question>",
+    usage: "misteal <your question>",
     author: "Your Name",
     version: "1.0.0",
     hasPermission: 0,
@@ -22,9 +22,9 @@ module.exports = {
             return; // Exit the function if no question is provided
         }
 
-        // Join arguments to form the question
-        const question = args.join(' ');
-        const apiUrl = `https://api.kenliejugarap.com/mistral/?question=${encodeURIComponent(question)}`;
+        // Join arguments to form the question and URL-encode it
+        const question = encodeURIComponent(args.join(' '));
+        const apiUrl = `https://api.kenliejugarap.com/mistral/?question=${question}`;
 
         // Notify the user that the answer is being fetched
         await sendMessage(senderId, { text: '⌛ Generating answer, please wait...' }, pageAccessToken);
@@ -74,4 +74,4 @@ async function sendMessage(senderId, message, pageAccessToken) {
     } catch (error) {
         console.error('Error sending message:', error);
     }
-}
+                              }
