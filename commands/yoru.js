@@ -51,7 +51,7 @@ module.exports = {
 
       // Include current time and contact message at the end
       sendMessage(senderId, {
-        text: `🕒 **Current time:** ${manilaTime}\n\n🔗 If you have any concerns, please contact the admin: [Admin](https://www.facebook.com/cristianmoridas.serrano)\n\n✨ **Fun Fact:** ${randomFact}`
+        text: `🕒 time check: ${manilaTime}\n\n🔗 If you have any concerns, please contact the admin: [Admin](https://www.facebook.com/cristianmoridas.serrano)\n\n✨ **Fun Fact:** ${randomFact}`
       }, pageAccessToken);
     } catch (error) {
       console.error('Error calling Gemini API:', error);
