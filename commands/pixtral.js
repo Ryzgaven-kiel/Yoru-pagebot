@@ -27,13 +27,24 @@ module.exports = {
     sendMessage(senderId, { text: '🤖 Analyzing image, please wait...' }, pageAccessToken);
 
     try {
+      // Log the image URL and question for debugging
+      console.log(`Image URL: ${imageUrl}`);
+      console.log(`Question: ${question}`);
+
       // Retrieve previous context for the user, if available
       const previousContext = userContext[senderId] || '';
       const fullQuestion = `${previousContext} ${question}`.trim();
 
       // Construct the API URL for the Pixtral API call
       const apiUrl = `https://api.kenliejugarap.com/pixtral-paid/?question=${encodeURIComponent(fullQuestion)}&image_url=${encodeURIComponent(imageUrl)}`;
+      
+      // Log the API URL to check for correctness
+      console.log(`API URL: ${apiUrl}`);
+
       const response = await axios.get(apiUrl);
+
+      // Log the response from the API for debugging
+      console.log("API Response:", response.data);
 
       // Extract the result from the response
       const result = response.data.result;
@@ -50,3 +61,4 @@ module.exports = {
     }
   }
 };
+    
