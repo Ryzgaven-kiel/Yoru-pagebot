@@ -3,18 +3,17 @@ const { sendMessage } = require('../handles/sendMessage');
 // Define and export module
 module.exports = {
   name: 'tictactoe',
-  description: 'Play a Tic-Tac-Toe game against Cristian (AI Bot)',
+  description: 'Play a Tic-Tac-Toe game against Cristian (AI Bot) with images!',
   usage: 'tictactoe <position>',
-  author: 'Cristian AI Bot',
+  author: 'Cristian',
 
-  // Initialize an empty Tic-Tac-Toe board and define the bot's move symbol
+  // Initialize an empty Tic-Tac-Toe board and define symbols
   board: [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-  botSymbol: 'O',
-  userSymbol: 'X',
+  botSymbol: '🤖', // Bot symbol
+  userSymbol: '👤', // User symbol
 
   // Execute the game logic
   async execute(senderId, args, pageAccessToken) {
-    // Position input from the user (1-9)
     const position = parseInt(args[0], 10) - 1;
 
     // Validate position input
@@ -58,16 +57,38 @@ module.exports = {
     await sendMessage(senderId, { text: "Your move! Choose a position from 1 to 9." }, pageAccessToken);
   },
 
-  // Function to display the board
+  // Function to display the board with images
   async displayBoard(senderId, pageAccessToken) {
-    const boardDisplay = `
-      ${this.board[0]} | ${this.board[1]} | ${this.board[2]}
+    const images = this.board.map(cell => {
+      if (cell === ' ') return 'https://example.com/empty.png'; // Link to an empty cell image
+      if (cell === this.userSymbol) return 'https://example.com/user.png'; // Link to user symbol image
+      if (cell === this.botSymbol) return 'https://example.com/bot.png'; // Link to bot symbol image
+    });
+
+    const boardMessage = `
+      ${images[0]} | ${images[1]} | ${images[2]}
       ---------
-      ${this.board[3]} | ${this.board[4]} | ${this.board[5]}
+      ${images[3]} | ${images[4]} | ${images[5]}
       ---------
-      ${this.board[6]} | ${this.board[7]} | ${this.board[8]}
+      ${images[6]} | ${images[7]} | ${images[8]}
     `;
-    await sendMessage(senderId, { text: boardDisplay }, pageAccessToken);
+
+    await sendMessage(senderId, {
+      attachment: {
+        type: 'image',
+        payload: {
+          url: this.generateBoardImage(images)
+        }
+      }
+    }, pageAccessToken);
+  },
+
+  // Generate an image representing the current board state
+  generateBoardImage(images) {
+    // Logic to create a composite image from the cell images
+    // This can be done using a canvas library or a server-side image processing tool
+    // For now, we will return a placeholder URL
+    return 'https://example.com/generated_board_image.png'; // Placeholder for generated image
   },
 
   // Check for a win
@@ -90,12 +111,9 @@ module.exports = {
     // Try to win or block if possible
     for (let i = 0; i < this.board.length; i++) {
       if (this.board[i] === ' ') {
-        // Check if bot can win
         this.board[i] = this.botSymbol;
         if (this.checkWin(this.botSymbol)) return i;
         this.board[i] = ' ';
-        
-        // Check if bot needs to block user
         this.board[i] = this.userSymbol;
         if (this.checkWin(this.userSymbol)) {
           this.board[i] = ' ';
@@ -104,8 +122,6 @@ module.exports = {
         this.board[i] = ' ';
       }
     }
-
-    // Default to first available spot if no immediate win or block is found
     return this.board.findIndex(cell => cell === ' ');
   },
 
@@ -114,4 +130,4 @@ module.exports = {
     this.board = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
   }
 };
-                               
+    
