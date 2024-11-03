@@ -8,12 +8,18 @@ module.exports = {
   name: 'pixtral',
   description: 'Analyze an image using Pixtral API with contextual memory',
   author: 'your_name', // Update with your name or desired author
-  async execute(senderId, args, pageAccessToken) {
-    const imageUrl = args[0]; // Assuming the first argument is the image URL
-    const question = args.slice(1).join(' '); // The rest is the question
+  async execute(senderId, args, pageAccessToken, message) {
+    // Check if the message contains an image
+    if (!message || !message.attachments || message.attachments.length === 0) {
+      sendMessage(senderId, { text: "Usage: Reply to an image with your question." }, pageAccessToken);
+      return; // Ensure the function doesn't continue
+    }
 
-    if (!imageUrl || question === "") {
-      sendMessage(senderId, { text: "Usage: /pixtral <image_url> <question>" }, pageAccessToken);
+    const imageUrl = message.attachments[0].url; // Assuming the first attachment is the image
+    const question = args.join(' '); // The rest is the question
+
+    if (question === "") {
+      sendMessage(senderId, { text: "Please provide a question along with the image." }, pageAccessToken);
       return; // Ensure the function doesn't continue
     }
 
