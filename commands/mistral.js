@@ -5,8 +5,8 @@ const { sendMessage } = require('../handles/sendMessage');
 const userContext = {};
 
 module.exports = {
-  name: 'pixtral',
-  description: 'Analyze an image using Pixtral API with contextual memory',
+  name: 'mistral',
+  description: 'Analyze an image using Mistral API with contextual memory',
   author: 'your_name', // Update with your name or desired author
   async execute(senderId, args, pageAccessToken, message) {
     // Log the incoming message for debugging
@@ -39,8 +39,8 @@ module.exports = {
       const previousContext = userContext[senderId] || '';
       const fullQuestion = `${previousContext} ${question}`.trim();
 
-      // Construct the API URL for the Pixtral API call
-      const apiUrl = `https://api.kenliejugarap.com/pixtral-paid/?question=${encodeURIComponent(fullQuestion)}&image_url=${encodeURIComponent(imageUrl)}`;
+      // Construct the API URL for the Mistral API call
+      const apiUrl = `https://api.kenliejugarap.com/mistral-large-paid/?question=${encodeURIComponent(fullQuestion)}`;
 
       // Log the API URL to check for correctness
       console.log(`API URL: ${apiUrl}`);
@@ -53,14 +53,15 @@ module.exports = {
       const result = response.data.result;
 
       // Send the generated text to the user with proper concatenation
-      sendMessage(senderId, { text: "🤖 Pixtral AI:\n\n" + result }, pageAccessToken);
+      sendMessage(senderId, { text: "🤖 Mistral AI:\n\n" + result }, pageAccessToken);
 
       // Update the user context with the new question and response for future interactions
       userContext[senderId] = `${fullQuestion}\n${result}`;
 
     } catch (error) {
-      console.error('Error calling Pixtral API:', error);
+      console.error('Error calling Mistral API:', error);
       sendMessage(senderId, { text: 'There was an error analyzing the image. Please try again later.' }, pageAccessToken);
     }
   }
 };
+        
