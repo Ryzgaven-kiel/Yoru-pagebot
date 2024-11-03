@@ -9,13 +9,17 @@ module.exports = {
   description: 'Analyze an image using Pixtral API with contextual memory',
   author: 'your_name', // Update with your name or desired author
   async execute(senderId, args, pageAccessToken, message) {
-    // Check if the message contains an image
-    if (!message || !message.attachments || message.attachments.length === 0) {
+    // Log the incoming message for debugging
+    console.log("Incoming message:", message);
+
+    // Check if the message contains an image attachment
+    const attachments = message.message ? message.message.attachments : null; // Adjusted to access nested attachments
+    if (!attachments || attachments.length === 0) {
       sendMessage(senderId, { text: "Usage: Reply to an image with your question." }, pageAccessToken);
       return; // Ensure the function doesn't continue
     }
 
-    const imageUrl = message.attachments[0].url; // Assuming the first attachment is the image
+    const imageUrl = attachments[0].payload.url; // Accessing the URL of the first attachment
     const question = args.join(' '); // The rest is the question
 
     if (question === "") {
@@ -37,12 +41,11 @@ module.exports = {
 
       // Construct the API URL for the Pixtral API call
       const apiUrl = `https://api.kenliejugarap.com/pixtral-paid/?question=${encodeURIComponent(fullQuestion)}&image_url=${encodeURIComponent(imageUrl)}`;
-      
+
       // Log the API URL to check for correctness
       console.log(`API URL: ${apiUrl}`);
 
       const response = await axios.get(apiUrl);
-
       // Log the response from the API for debugging
       console.log("API Response:", response.data);
 
@@ -61,4 +64,3 @@ module.exports = {
     }
   }
 };
-    
