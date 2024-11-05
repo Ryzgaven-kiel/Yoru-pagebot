@@ -1,6 +1,6 @@
 // Export the module
 module.exports = {
-  name: 'greet', // Command name
+  name: '', // Command name
   description: 'Responds to greetings and introduces Yoru Bot.',
   author: 'Your Name',
 
