@@ -5,7 +5,7 @@ module.exports = {
   name: 'yoruv2',
   description: 'Conversational yoruv2 with attachments support',
   role: 1,
-  author: 'Jay',
+  author: 'secret',
 
   async execute(senderId, args, pageAccessToken) {
     const prompt = args.join(' ');
