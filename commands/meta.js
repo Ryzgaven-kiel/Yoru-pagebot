@@ -10,7 +10,7 @@ module.exports = {
   async execute(senderId, args, pageAccessToken) {
     const query = args.join(' ').trim();
 
-    // If there's no query, provide an introductory message
+    // Check for an empty query and send an initial greeting if needed
     if (!query) {
       return sendMessage(senderId, { text: 'Hello, I\'m Meta AI. How can I assist you today?' }, pageAccessToken);
     }
@@ -18,18 +18,29 @@ module.exports = {
     const apiUrl = `https://api.y2pheq.me/meta?prompt=${encodeURIComponent(query)}`;
 
     try {
+      // Perform the GET request to the Meta API
       const response = await axios.get(apiUrl);
 
-      // Check if the API returned the expected response
-      if (response.data && response.data.response) {
+      // Check if the response data is structured as expected
+      if (response.status === 200 && response.data && response.data.response) {
         const formattedResponse = `🤖 𝗠𝗘𝗧𝗔 𝗔𝗜\n\n${response.data.response}`;
         await sendResponseInChunks(senderId, formattedResponse, pageAccessToken);
       } else {
-        // Handle unexpected or missing response data
+        // Log the entire response in case of unexpected structure
+        console.error('Unexpected response structure:', response.data);
         await sendMessage(senderId, { text: 'Sorry, Meta AI couldn\'t process your request at this time.' }, pageAccessToken);
       }
     } catch (error) {
+      // Log detailed error information
       console.error('Error calling Meta API:', error.message || error);
+
+      // Check if the error is due to a response from the server (4xx or 5xx status codes)
+      if (error.response) {
+        console.error('Response status:', error.response.status);
+        console.error('Response data:', error.response.data);
+      }
+
+      // Send a generic error message to the user
       await sendMessage(senderId, { text: 'Sorry, there was an error processing your request. Please try again later.' }, pageAccessToken);
     }
   }
@@ -49,7 +60,7 @@ async function sendResponseInChunks(senderId, text, pageAccessToken) {
   }
 }
 
-// Splits a message into chunks based on word boundaries for better readability
+// Function to split a long message into chunks by word boundaries
 function splitMessageIntoChunks(message, chunkSize) {
   const chunks = [];
   let chunk = '';
@@ -68,5 +79,4 @@ function splitMessageIntoChunks(message, chunkSize) {
   }
 
   return chunks;
-    }
-        
+}
