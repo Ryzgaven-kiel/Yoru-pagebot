@@ -14,14 +14,17 @@ module.exports = {
       return sendMessage(senderId, { text: 'Hello, I\'m Meta AI. How can I assist you today?' }, pageAccessToken);
     }
 
-    // Add the UID parameter using the senderId to make the conversation personalized and consistent
     const apiUrl = `https://api.y2pheq.me/meta?prompt=${encodeURIComponent(query)}&UID=${encodeURIComponent(senderId)}`;
 
     try {
       const response = await axios.get(apiUrl);
 
-      // Log the full response to understand its structure
-      console.log('API response data:', response.data);
+      // Log the full response details
+      console.log('Full API Response:', {
+        status: response.status,
+        headers: response.headers,
+        data: response.data,
+      });
 
       // Check if the response has the expected format
       if (response.status === 200 && response.data && response.data.response) {
@@ -37,6 +40,8 @@ module.exports = {
       if (error.response) {
         console.error('Response status:', error.response.status);
         console.error('Response data:', error.response.data);
+      } else {
+        console.error('Error details:', error);
       }
 
       await sendMessage(senderId, { text: 'Sorry, there was an error processing your request. Please try again later.' }, pageAccessToken);
@@ -45,4 +50,3 @@ module.exports = {
 };
 
 // Helper functions remain the same...
-    
