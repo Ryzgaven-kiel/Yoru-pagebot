@@ -14,7 +14,8 @@ module.exports = {
       return sendMessage(senderId, { text: 'Hello, I\'m Meta AI. How can I assist you today?' }, pageAccessToken);
     }
 
-    const apiUrl = `https://api.y2pheq.me/meta?prompt=${encodeURIComponent(query)}`;
+    // Add the UID parameter using the senderId to make the conversation personalized and consistent
+    const apiUrl = `https://api.y2pheq.me/meta?prompt=${encodeURIComponent(query)}&UID=${encodeURIComponent(senderId)}`;
 
     try {
       const response = await axios.get(apiUrl);
@@ -27,7 +28,6 @@ module.exports = {
         const formattedResponse = `🤖 𝗠𝗘𝗧𝗔 𝗔𝗜\n\n${response.data.response}`;
         await sendResponseInChunks(senderId, formattedResponse, pageAccessToken);
       } else {
-        // Log a message if the response structure is unexpected
         console.warn('Unexpected response structure or missing "response" field');
         await sendMessage(senderId, { text: 'Sorry, Meta AI couldn\'t process your request at this time.' }, pageAccessToken);
       }
@@ -45,3 +45,4 @@ module.exports = {
 };
 
 // Helper functions remain the same...
+    
