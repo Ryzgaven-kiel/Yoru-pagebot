@@ -3,7 +3,7 @@ const path = require('path');
 const { sendMessage } = require('./sendMessage');
 
 const commands = new Map();
-const prefix = '-';
+const prefix = '-';  // No longer used in this version, can be removed if not needed
 
 const commandFiles = fs.readdirSync(path.join(__dirname, '../commands')).filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
@@ -26,19 +26,15 @@ async function handleMessage(event, pageAccessToken) {
   }
 
   if (event.message && event.message.text) {
-    const messageText = event.message.text.trim();
+    const messageText = event.message.text.trim().toLowerCase();
     let commandName, args;
 
-    if (messageText.startsWith(prefix)) {
-      const argsArray = messageText.slice(prefix.length).split(' ');
-      commandName = argsArray.shift().toLowerCase();
-      args = argsArray;
-    } else {
-      const words = messageText.split(' ');
-      commandName = words.shift().toLowerCase();
-      args = words;
-    }
+    // In this version, no prefix is required. We will try to find a suitable command by matching the message text directly.
+    const words = messageText.split(' ');
+    commandName = words.shift().toLowerCase(); // Get the first word in the message as the potential command
+    args = words; // Remaining words will be arguments
 
+    // Check if the message matches a known command
     if (commands.has(commandName)) {
       const command = commands.get(commandName);
       try {
@@ -49,6 +45,34 @@ async function handleMessage(event, pageAccessToken) {
       }
       return;
     }
+
+    // You can add custom auto-responses based on specific keywords or phrases
+    if (messageText.includes("hello")) {
+      sendMessage(senderId, { text: 'Hi there! How can I help you today?' }, pageAccessToken);
+      return;
+    }
+
+    if (messageText.includes("help")) {
+      sendMessage(senderId, { text: 'Here are some commands you can try: [list of commands]' }, pageAccessToken);
+      return;
+    }
+
+    // Example of auto-trigger based on message content (could be more complex, like regex matching, etc.)
+    if (messageText.includes("gemini")) {
+      const command = commands.get('gemini');
+      if (command) {
+        try {
+          await command.execute(senderId, args, pageAccessToken, sendMessage);
+        } catch (error) {
+          console.error('Error processing "gemini" command:', error);
+          sendMessage(senderId, { text: 'Failed to process gemini request.' }, pageAccessToken);
+        }
+      }
+      return;
+    }
+
+    // If no known command or custom response found, we can choose to send a default reply
+    sendMessage(senderId, { text: 'I am not sure what you mean, but I am here to help!' }, pageAccessToken);
   } else if (event.message.attachments) {
     const imageUrl = event.message.attachments[0].payload.url;
     if (imageUrl) {
@@ -68,4 +92,4 @@ async function handleMessage(event, pageAccessToken) {
 }
 
 module.exports = { handleMessage };
-             
+      
