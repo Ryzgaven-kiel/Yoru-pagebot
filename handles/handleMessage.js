@@ -15,10 +15,19 @@ fs.readdirSync(path.join(__dirname, '../commands'))
 
 async function handleMessage(event, pageAccessToken) {
   const senderId = event?.sender?.id;
-  if (!senderId) return console.error('Invalid event object');
+  if (!senderId) {
+    console.error('Invalid event object: Missing sender ID');
+    return;
+  }
 
   const messageText = event?.message?.text?.trim();
-  if (!messageText) return console.log('Received event without message text');
+  if (!messageText) {
+    console.log('Received event without message text');
+    return;
+  }
+
+  // Check for reply_to property if needed
+  const replyTo = event?.message?.reply_to;
 
   const [commandName, ...args] = messageText.startsWith(prefix)
     ? messageText.slice(prefix.length).split(' ')
@@ -26,12 +35,14 @@ async function handleMessage(event, pageAccessToken) {
 
   try {
     if (commands.has(commandName.toLowerCase())) {
-      await commands.get(commandName.toLowerCase()).execute(senderId, args, pageAccessToken, sendMessage);
+      // Handle command
+      await commands.get(commandName.toLowerCase()).execute(senderId, args, pageAccessToken, sendMessage, replyTo);
     } else {
-      await commands.get('gpt4').execute(senderId, [messageText], pageAccessToken);
+      // Default to 'gpt4' command if not found
+      await commands.get('gpt4').execute(senderId, [messageText], pageAccessToken, sendMessage, replyTo);
     }
   } catch (error) {
-    console.error(`Error executing command:`, error);
+    console.error('Error executing command:', error);
     await sendMessage(senderId, { text: error.message || 'There was an error executing that command.' }, pageAccessToken);
   }
 }
